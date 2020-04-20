@@ -1,0 +1,21 @@
+#title,
+#sub-title {
+  text-align: center;
+}
+
+.dot:hover {
+  fill: orangered;
+}
+
+.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 120px;
+  height: auto;
+  padding: 50px;
+  font: 12px sans-serif;
+  background: lavender;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
