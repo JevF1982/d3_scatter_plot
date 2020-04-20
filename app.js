@@ -6,17 +6,17 @@ var url =
   "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json";
 
 d3.json(url, (data) => {
+  // set color scheme
   const color = d3.scaleOrdinal(d3.schemeCategory10);
   //format Y values
   const timeFormat = "%M:%S";
   const yTime = data.map((item) => d3.timeParse(timeFormat)(item.Time));
 
-  console.log(data);
-
   // format x values
   const yearFormat = "%Y";
   const xYear = data.map((item) => d3.timeParse(yearFormat)(item.Year));
 
+  // create div for tooltip
   const tooltip = d3
     .select("body")
     .append("div")
@@ -24,22 +24,26 @@ d3.json(url, (data) => {
     .attr("id", "tooltip")
     .style("opacity", 0);
 
+  // create xscale
   const xScale = d3
     .scaleTime()
     .domain(d3.extent(xYear))
     .range([padding, w - padding]);
 
+  // create yscale
   const yScale = d3
     .scaleLinear()
     .domain(d3.extent(yTime))
     .range([h - padding, padding]);
 
+  // create svg
   const svg = d3
     .select("body")
     .append("svg")
     .attr("width", w)
     .attr("height", h);
 
+  // add circles
   svg
     .selectAll("circle")
     .data(data)
@@ -53,6 +57,7 @@ d3.json(url, (data) => {
     .attr("data-xvalue", (d) => d.Year)
     .attr("data-yvalue", (d) => d3.timeParse(timeFormat)(d.Time))
     .style("fill", (d) => color(d.Doping != ""))
+    // add tooltip on mouse over
     .on("mouseover", function (d) {
       tooltip.transition().duration(200).style("opacity", 0.9);
       tooltip
@@ -77,12 +82,8 @@ d3.json(url, (data) => {
       tooltip.transition().duration(400).style("opacity", 0);
     });
 
+  // create xAxis
   const xAxis = d3.axisBottom(xScale);
-
-  const yAxis = d3
-    .axisLeft(yScale)
-    .tickValues(yTime)
-    .tickFormat((item) => d3.timeFormat(timeFormat)(item));
 
   svg
     .append("g")
@@ -96,6 +97,13 @@ d3.json(url, (data) => {
     .style("text-anchor", "middle")
     .text("Year")
     .style("fill", "black");
+
+  // create yAxis with correct tick placement
+  const yAxis = d3
+    .axisLeft(yScale)
+    .tickValues(yTime)
+    .tickFormat((item) => d3.timeFormat(timeFormat)(item));
+
   svg
     .append("g")
     .attr("transform", "translate(" + padding + ",0)")
@@ -111,6 +119,7 @@ d3.json(url, (data) => {
     .text("Best Time (minutes)")
     .style("fill", "black");
 
+  // create legend bar
   const legendContainer = svg.append("g").attr("id", "legend");
 
   const legend = legendContainer
